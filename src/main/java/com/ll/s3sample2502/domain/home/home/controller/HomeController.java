@@ -55,6 +55,10 @@ public class HomeController {
         s3Client.putObject(putObjectRequest,
                 RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-        return "Uploaded Success";
+        return """
+                <img src="%s">
+                <hr>
+                <div>업로드 완료</div>
+                """.formatted(getS3FileUrl(IMG_DIR_NAME + "/" + file.getOriginalFilename()));
     }
 }
