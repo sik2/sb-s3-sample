@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
@@ -60,5 +61,27 @@ public class HomeController {
                 <hr>
                 <div>업로드 완료</div>
                 """.formatted(getS3FileUrl(IMG_DIR_NAME + "/" + file.getOriginalFilename()));
+    }
+
+    @GetMapping("/deleteFile")
+    public String showDeleteFile() {
+        return """
+                <form action="/deleteFile" method="post">
+                    <input type="text" name="fileName">
+                    <input type="submit" value="delete">
+                </form>
+                """;
+    }
+
+    @PostMapping("/deleteFile")
+    @ResponseBody
+    public String deleteFile(String fileName) {
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(IMG_DIR_NAME + "/" + fileName)
+                .build();
+
+        s3Client.deleteObject(deleteObjectRequest);
+        return "파일이 삭제되었습니다.";
     }
 }
